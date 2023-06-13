@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import * as Location from "expo-location";
 import axios from "axios";
+import { Feather } from "@expo/vector-icons";
 
 const getISTTime = (unixTimestamp) => {
   const date = new Date(unixTimestamp * 1000);
@@ -112,25 +113,61 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       {weather && currentTime ? (
-        <Text style={styles.weatherText}>
-          Place: {placeName}
-          {"\n"}
-          Weather: {weather.weather[0].main}, Temperature: {(
-            weather.main.temp - 273.15
-          ).toFixed(2)}
-          °C, H: {(weather.main.temp_max - 273.15).toFixed(2)}°C, L: {(
-            weather.main.temp_min - 273.15
-          ).toFixed(2)}
-          °C
-          {"\n"}
-          Sunrise: {getISTTime(weather.sys.sunrise)},
-          Sunset: {getISTTime(weather.sys.sunset)}
-          {"\n"}
-          Wind: {weather.wind.speed} m/s
-          {"\n"}
-          Current Time: {getISTTime(currentTime.getTime() / 1000)}
-          Current Day: {getCurrentDay()}
-        </Text>
+        <View style={styles.weatherContainer}>
+          <View style={styles.locationContainer}>
+            <Feather name="map-pin" size={24} color="#607D8B" />
+            <Text style={styles.locationText}>{placeName}</Text>
+          </View>
+          <View style={styles.temperatureContainer}>
+            <Text style={styles.temperatureText}>
+              {(weather.main.temp - 273.15).toFixed(1)}°C
+            </Text>
+            <View style={styles.tempRangeContainer}>
+              <Text style={styles.tempRangeText}>
+                H: {(weather.main.temp_max - 273.15).toFixed(1)}°C
+              </Text>
+              <Text style={styles.tempRangeText}>
+                L: {(weather.main.temp_min - 273.15).toFixed(1)}°C
+              </Text>
+            </View>
+          </View>
+          <View style={styles.dayTimeContainer}>
+            <Text style={styles.dayTimeText}>
+              {getCurrentDay()}, {getISTTime(currentTime.getTime() / 1000)}
+            </Text>
+            <View style={styles.horizontalLine} />
+          </View>
+          <View style={styles.weatherInfoContainer}>
+            <View style={styles.weatherInfoItem}>
+              <Feather name="wind" size={24} color="#03A9F4" />
+              <Text style={styles.weatherInfoLabelText}>Wind</Text>
+              <Text style={styles.weatherInfoText}>
+                {weather.wind.speed} m/s
+              </Text>
+            </View>
+            <View style={styles.weatherInfoItem}>
+              <Feather name="droplet" size={24} color="#4CAF50" />
+              <Text style={styles.weatherInfoLabelText}>Humidity</Text>
+              <Text style={styles.weatherInfoText}>
+                {weather.main.humidity}%
+              </Text>
+            </View>
+            <View style={styles.weatherInfoItem}>
+              <Feather name="sunrise" size={24} color="#FFC107" />
+              <Text style={styles.weatherInfoLabelText}>Sunrise</Text>
+              <Text style={styles.weatherInfoText}>
+                {getISTTime(weather.sys.sunrise)}
+              </Text>
+            </View>
+            <View style={styles.weatherInfoItem}>
+              <Feather name="sunset" size={24} color="#FF5722" />
+              <Text style={styles.weatherInfoLabelText}>Sunset</Text>
+              <Text style={styles.weatherInfoText}>
+                {getISTTime(weather.sys.sunset)}
+              </Text>
+            </View>
+          </View>
+        </View>
       ) : (
         <Text style={styles.loadingText}>Loading...</Text>
       )}
@@ -138,19 +175,93 @@ const HomeScreen = () => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  weatherText: {
+  weatherContainer: {
+    backgroundColor: "#E0E0E0",
+    borderRadius: 16,
+    padding: 16,
+    width: "80%",
+    alignItems: "flex-start",
+  },
+  locationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+    justifyContent: "flex-start",
+  },
+  locationText: {
+    marginLeft: 8,
     fontSize: 18,
+    color: "#607D8B",
+  },
+  temperatureContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  temperatureText: {
+    fontSize: 48,
+    fontWeight: "bold",
+    color: "#424242",
+  },
+  tempRangeContainer: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
+  tempRangeText: {
+    fontSize: 14,
+    lineHeight: 18,
+    textAlign: "left",
+    color: "#757575",
+  },
+  dayTimeContainer: {
+    marginBottom: 16,
+    alignSelf: "stretch",
+    alignItems: "flex-start",
+  },
+  dayTimeText: {
+    fontSize: 16,
+    textAlign: "left",
+    color: "#757575",
+  },
+  horizontalLine: {
+    borderBottomColor: "gray",
+    borderBottomWidth: 1,
+    marginBottom: 16,
+    width: "100%",
+  },
+  weatherInfoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  weatherInfoItem: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  weatherInfoLabelText: {
+    fontSize: 12,
+    marginTop: 4,
     textAlign: "center",
+    color: "#757575",
+  },
+  weatherInfoText: {
+    fontSize: 14,
+    marginTop: 4,
+    textAlign: "center",
+    color: "#424242",
   },
   loadingText: {
     fontSize: 18,
     textAlign: "center",
+    color: "#757575",
   },
 });
 
