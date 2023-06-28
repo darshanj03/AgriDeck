@@ -3,12 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GetStartedScreen from './screens/getStartedScreen';
-import LoginScreen from './screens/login';
 import RegisterScreen from './screens/registration';
 import HomeScreen from './screens/home';
 import TestScreen from './screens/test';
 import Restorepage from './screens/restore';
-import LoignTest from './screens/loginTest';
+import LoignScreen from './screens/loginTest';
 
 const Stack = createStackNavigator();
 
@@ -49,7 +48,7 @@ export default function App() {
             headerTitleAlign: 'center',
           }}
         />
-        <Stack.Screen name="Login" component={LoignTest} 
+        <Stack.Screen name="Login" component={LoignScreen} 
           options={{
             title: 'Login',
             headerTitleAlign: 'center',

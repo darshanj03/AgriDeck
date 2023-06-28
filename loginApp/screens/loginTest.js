@@ -16,7 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import auth from "../config/firebaseConfig";
 
-function LoginTest(props) {
+function LoginScreen(props) {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -123,8 +123,6 @@ function LoginTest(props) {
               autoCapitalize="none"
             />
           </View>
-        </View>
-        <View style={styles.inputContainer}>
           <View style={styles.inputRow}>
             <Ionicons name="md-lock-closed" style={styles.inputIcon} />
             <TextInput
@@ -221,11 +219,13 @@ const styles = StyleSheet.create({
   rememberText: {
     color: "rgba(87, 87, 87, 1)",
     fontSize: 14,
+    marginTop: 5,
   },
   forgotText: {
     color: "rgba(87, 87, 87, 1)",
     fontSize: 13,
     marginLeft: "auto",
+    marginTop: 5,
   },
   safeArea: {
     flex: 1,
@@ -242,16 +242,19 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginTop: 40,
     alignSelf: "center",
+    letterSpacing: 1,
+    fontWeight: 500,
   },
   loginText: {
     fontSize: 15,
     color: "rgba(87, 87, 87, 1)",
     marginTop: 10,
     textAlign: "center",
+    letterSpacing: 0.5,
   },
   inputContainer: {
     width: "90%", // Adjust the width as desired
-    marginTop: 20,
+    marginTop: 40,
   },
   inputRow: {
     flexDirection: "row",
@@ -259,16 +262,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "rgba(233,233,233,1)",
     borderRadius: 10,
+    marginTop: 14,
   },
   inputIcon: {
     color: "rgba(128, 128, 128, 1)",
     fontSize: 20,
     height: 23,
     width: 20,
+    marginLeft: 5,
   },
   input: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 12,
     fontSize: 16,
     height: 50,
   },
@@ -282,11 +287,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     width: 353,
     height: 47,
+    marginTop: 100,
   },
   buttonText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
+    letterSpacing: 2,
   },
   signupText: {
     marginTop: 20,
@@ -320,4 +327,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginTest;
+export default LoginScreen;
