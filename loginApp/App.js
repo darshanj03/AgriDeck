@@ -8,6 +8,7 @@ import RegisterScreen from './screens/registration';
 import HomeScreen from './screens/home';
 import TestScreen from './screens/test';
 import Restorepage from './screens/restore';
+import LoignTest from './screens/loginTest';
 
 const Stack = createStackNavigator();
 
@@ -48,7 +49,7 @@ export default function App() {
             headerTitleAlign: 'center',
           }}
         />
-        <Stack.Screen name="Login" component={LoginScreen} 
+        <Stack.Screen name="Login" component={LoignTest} 
           options={{
             title: 'Login',
             headerTitleAlign: 'center',
