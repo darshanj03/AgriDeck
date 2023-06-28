@@ -1,32 +1,92 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import GetStartedScreen from './screens/getStartedScreen';
 import LoginScreen from './screens/login';
+import RegisterScreen from './screens/registration';
 import HomeScreen from './screens/home';
 import TestScreen from './screens/test';
-import TodoList from './screens/toDo';
-import RegistrationScreen from './screens/registration';
+import Restorepage from './screens/restore';
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [isFirstTime, setIsFirstTime] = useState(true);
+
+  useEffect(() => {
+    checkIfFirstTime();
+  }, []);
+
+  const checkIfFirstTime = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@app:isFirstTime');
+      setIsFirstTime(value === null);
+    } catch (error) {
+      console.log('Error checking first time:', error);
+    }
+  };
+
+  const setNotFirstTime = async () => {
+    try {
+      await AsyncStorage.setItem('@app:isFirstTime', 'false');
+    } catch (error) {
+      console.log('Error setting not first time:', error);
+    }
+  };
+
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
+      <Stack.Navigator initialRouteName={isFirstTime ? 'GetStarted' : 'Login'} 
+        screenOptions={{ 
+          headerShown: false 
         }}
       >
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={TestScreen} 
-        options={({ route }) => ({
-          headerLeft: null,
-          email: route.params?.email, // Pass the email value as a screen option
-        })}
+        <Stack.Screen name="GetStarted" component={GetStartedScreen} 
+          options={{
+            title: 'Get Started',
+            headerTitleAlign: 'center',
+          }}
         />
-        <Stack.Screen name="Registration" component={RegistrationScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} 
+          options={{
+            title: 'Login',
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen name="Register" component={RegisterScreen} 
+          options={{
+            title: 'Register',
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen name="Restore" component={Restorepage} 
+          options={{
+            title: 'Test',
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen name="Home" component={HomeScreen} 
+          options={({ route }) => ({
+            title: 'Home',
+            headerTitleAlign: 'center',
+            headerLeft: null,
+            email: route.params?.email,
+          })}
+          listeners={({ navigation }) => ({
+            beforeRemove: () => {
+              setNotFirstTime();
+              navigation.removeListener('beforeRemove');
+            },
+          })}
+        />
+        <Stack.Screen name="Test" component={TestScreen} 
+          options={{
+            title: 'Test',
+            headerTitleAlign: 'center',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-

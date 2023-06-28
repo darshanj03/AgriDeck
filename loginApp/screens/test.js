@@ -64,8 +64,6 @@ const TestScreen = ({ route }) => {
           <Text>Altitude: {Math.round(Number(data.field4))} m</Text>
           <Text>Air Quality: {Math.round(Number(data.field5))} AQI</Text>
           <Text>Soil Moisture: {Math.round(Number(data.field6))} %</Text>
-          {/* Add more fields as needed */}
-          <Text style={styles.userName}>Welcome, {userName}</Text>
         </View>
       ) : (
         <Text>Loading data...</Text>
