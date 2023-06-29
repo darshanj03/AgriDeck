@@ -5,6 +5,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import db from "../config/firebaseDB";
 
 const TestScreen = ({ route }) => {
+  console.log(require.resolve('./Tomato.obj'))
   const [data, setData] = useState(null);
   const [userName, setUserName] = useState('');
 
@@ -36,26 +37,28 @@ const TestScreen = ({ route }) => {
     };
   }, []);
 
-  useEffect(() => {
-    const email = route.params?.email;
-    const fetchUserName = async () => {
-      try {
-        const q = query(collection(db, 'users'), where('email', '==', email)); // Update this line
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          const userData = doc.data();
-          setUserName(userData.name);
-        });
-      } catch (error) {
-        console.log("Error fetching user data from Firestore", error);
-      }
-    };
+  // useEffect(() => {
+  //   const email = route.params?.email;
+  //   const fetchUserName = async () => {
+  //     try {
+  //       const q = query(collection(db, 'users'), where('email', '==', email)); // Update this line
+  //       const querySnapshot = await getDocs(q);
+  //       querySnapshot.forEach((doc) => {
+  //         const userData = doc.data();
+  //         setUserName(userData.name);
+  //       });
+  //     } catch (error) {
+  //       console.log("Error fetching user data from Firestore", error);
+  //     }
+  //   };
   
-    fetchUserName();
-  }, [route.params?.email]);
+  //   fetchUserName();
+  // }, [route.params?.email]);
 
   return (
     <View style={styles.container}>
+      {/* <ModelView source={require('./Tomato')} /> */}
+      
       {data ? (
         <View style={styles.content}>
           <Text>Temperature: {Number(data.field1).toFixed(2)} °C</Text>

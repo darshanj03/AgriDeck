@@ -126,7 +126,7 @@ function LoginScreen(props) {
           <View style={styles.inputRow}>
             <Ionicons name="md-lock-closed" style={styles.inputIcon} />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { paddingRight: 30 }]}
               placeholder="Password"
               value={password}
               onChangeText={setPassword}
@@ -303,7 +303,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   eyeIconContainer: {
-    marginLeft: 10,
+    position: "absolute",
+    right: 10,
     justifyContent: "center",
     alignItems: "center",
   },

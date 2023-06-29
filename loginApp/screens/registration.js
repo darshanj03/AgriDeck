@@ -1,143 +1,304 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import { collection, addDoc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import auth from '../config/firebaseConfig';
-import db from '../config/firebaseDB';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  SafeAreaView,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import auth from "../config/firebaseConfig";
+import db from "../config/firebaseDB";
+import { useNavigation } from "@react-navigation/native";
+import { collection, addDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-export default function RegistrationScreen({ navigation }) {
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function RegistrationScreen() {
+  const navigation = useNavigation();
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const navigateLogin = () => {
+    navigation.navigate("Login");
+  };
 
   const handleBackPress = () => {
-    navigation.navigate('GetStarted');
+    navigation.navigate("GetStarted");
   };
 
   const handleRegistration = async () => {
-    if (!name || !age || !phoneNumber || !email || !password) {
-      Alert.alert('Error', 'Please fill in all the fields');
+    if (!name || !phoneNumber || !email || !password) {
+      Alert.alert("Error", "Please fill in all the fields");
       return;
     }
-  
+
     try {
-      // Create an account with email and password
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      setLoading(true); // Set loading state to true
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-  
-      // Save user details to Firestore collection
-      await addDoc(collection(db, 'users'), {
+
+      await addDoc(collection(db, "users"), {
         name,
-        age,
         phoneNumber,
         email,
-        userId: user.uid, // Link the user's email with the document using a userId field
+        userId: user.uid,
       });
-  
-      Alert.alert('Registration Successful', 'Successfully created an account');
-      navigation.navigate('Home', { email }); // Navigate to the Home screen after successful registration
+
+      Alert.alert("Registration Successful", "Successfully created an account");
+      navigation.navigate("Home", { email });
     } catch (error) {
-      Alert.alert('Registration Error', error.message);
+      Alert.alert("Registration Error", error.message);
+    } finally {
+      setLoading(false); // Set loading state to false
     }
   };
 
-  const handleLogin = () => {
-    navigation.navigate('Login');
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-        <Ionicons name="arrow-back" size={24} color="#333333" />
-      </TouchableOpacity>
-      <Text style={styles.heading}>Registration</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Name"
-          value={name}
-          onChangeText={setName}
-          placeholderTextColor="#999999"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Age"
-          value={age}
-          onChangeText={setAge}
-          keyboardType="numeric"
-          placeholderTextColor="#999999"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-          keyboardType="phone-pad"
-          placeholderTextColor="#999999"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          placeholderTextColor="#999999"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          placeholderTextColor="#999999"
-        />
-        <Button title="Register" onPress={handleRegistration} color="#FF6F61" />
-        <TouchableOpacity onPress={handleLogin}>
-          <Text style={styles.loginText}>Already have an account? Click here to Login</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+    <>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.iconRow}>
+          <TouchableOpacity onPress={handleBackPress}>
+            <Ionicons name="arrow-back" style={styles.icon} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.contentContainer}>
+          <View style={styles.textContainer}>
+            <Text style={styles.register}>Register</Text>
+            <Text style={[styles.subText, { marginTop: 10 }]}>
+              Create your new account
+            </Text>
+          </View>
+
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../assets/images/single-leaf.png")}
+              resizeMode="contain"
+              style={styles.image}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <View style={styles.inputRow}>
+              <Ionicons name="person" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Name"
+                value={name}
+                onChangeText={setName}
+                placeholderTextColor="rgba(159, 159, 159, 1)"
+              />
+            </View>
+
+            <View style={styles.inputRow}>
+              <Ionicons name="call" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Phone Number"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                placeholderTextColor="rgba(159, 159, 159, 1)"
+                keyboardType="phone-pad"
+              />
+            </View>
+
+            <View style={styles.inputRow}>
+              <Ionicons name="mail" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                placeholderTextColor="rgba(159, 159, 159, 1)"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <View style={styles.inputRow}>
+              <Ionicons name="md-lock-closed" style={styles.inputIcon} />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholderTextColor="rgba(159, 159, 159, 1)"
+                  secureTextEntry={!showPassword}
+                />
+                <TouchableOpacity
+                  onPress={toggleShowPassword}
+                  style={styles.eyeIconContainer}
+                >
+                  <Ionicons
+                    name={showPassword ? "md-eye-off" : "md-eye"}
+                    style={styles.eyeIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.registerButton}>
+              <TouchableOpacity onPress={handleRegistration}>
+                <Text style={styles.registerButtonText}>Register</Text>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity onPress={navigateLogin}>
+              <Text style={[styles.subText, { marginTop: 15, textDecorationLine: "underline", }]}>
+                Already have an account? Log in
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+          <Text style={styles.overlayText}>Loading</Text>
+        </View>
+      )}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
   },
-  backButton: {
-    marginLeft: 16,
-    marginTop: 16,
+  iconRow: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    width: "100%",
+    paddingHorizontal: 16,
+    marginTop: 10,
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333333',
+  icon: {
+    color: "rgba(41, 45, 50, 1)",
+    fontSize: 30,
+  },
+  contentContainer: {
+    flex: 1,
+    width: "90%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textContainer: {
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  register: {
+    fontSize: 40,
+    letterSpacing: 1,
+    fontWeight: "600",
+  },
+  subText: {
+    fontSize: 15,
+    color: "rgba(87, 87, 87, 1)",
+  },
+  imageContainer: {
+    position: "absolute",
+    top: -25,
+    right: -50,
+    flex: 1,
+    alignItems: "flex-start", // Align the image to the right
+  },
+  image: {
+    width: 150,
+    height: 150,
+    transform: [{ rotate: "-70.00deg" }],
+    marginLeft: 1,
+    marginTop: 20,
+    shadowColor: "rgba(0, 0, 0, 0.9)",
+    shadowOpacity: 0.5,
+    shadowOffset: { width: -4, height: 4 },
+    shadowRadius: 8,
   },
   inputContainer: {
-    width: '100%',
-    paddingHorizontal: 20,
-    marginTop: 20,
+    width: "100%",
+    marginTop: 50,
+    alignItems: "center",
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    backgroundColor: "rgba(233,233,233,0.7)",
+    borderRadius: 10,
+    marginTop: 14,
+  },
+  inputIcon: {
+    color: "rgba(128, 128, 128, 1)",
+    fontSize: 20,
+    height: 23,
+    width: 20,
+    marginLeft: 5,
   },
   input: {
-    height: 40,
-    width: '100%',
-    borderColor: '#CCCCCC',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    color: '#333333',
+    marginLeft: 10,
+    color: "black",
+    flex: 1,
+    height: 50,
   },
-  loginText: {
-    marginTop: 10,
-    color: '#3366CC',
-    alignSelf: 'center',
-    textDecorationLine: 'underline',
+  passwordContainer: {
+    flex: 1,
+    marginLeft: 5,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  eyeIconContainer: {
+    marginLeft: 10,
+  },
+  eyeIcon: {
+    fontSize: 20,
+    color: "rgba(128, 128, 128, 1)",
+  },
+  registerButton: {
+    width: 353,
+    height: 47,
+    backgroundColor: "rgba(0, 0, 0, 1)",
+    borderRadius: 15,
+    marginTop: 134,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  registerButtonText: {
+    color: "rgba(255, 255, 255, 1)",
+    fontSize: 25,
+    letterSpacing: 2,
+    fontFamily: "System",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 2,
+  },
+  overlayText: {
+    color: "white",
+    fontSize: 18,
+    marginTop: 20,
   },
 });
+
+export default RegistrationScreen;
