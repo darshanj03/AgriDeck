@@ -5,7 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import GetStartedScreen from './screens/getStartedScreen';
 import HomeScreen from './screens/home';
 import TestScreen from './screens/test';
-import Restorepage from './screens/restore';
 import LoignScreen from './screens/login';
 import RegistrationScreen from './screens/registration';
 
@@ -57,12 +56,6 @@ export default function App() {
         <Stack.Screen name="Register" component={RegistrationScreen} 
           options={{
             title: 'Register',
-            headerTitleAlign: 'center',
-          }}
-        />
-        <Stack.Screen name="Restore" component={Restorepage} 
-          options={{
-            title: 'Test',
             headerTitleAlign: 'center',
           }}
         />

@@ -16,6 +16,7 @@ import db from "../config/firebaseDB";
 import { useNavigation } from "@react-navigation/native";
 import { collection, addDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 function RegistrationScreen() {
   const navigation = useNavigation();
