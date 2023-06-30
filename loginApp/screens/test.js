@@ -3,11 +3,14 @@ import { View, Text, StyleSheet } from "react-native";
 import axios from "axios";
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import db from "../config/firebaseDB";
+import Footer from "../components/footer";
+import { useNavigation } from "@react-navigation/native";
 
 const TestScreen = ({ route }) => {
-  console.log(require.resolve('./Tomato.obj'))
+  const navigation = useNavigation()
   const [data, setData] = useState(null);
   const [userName, setUserName] = useState('');
+  const [activePage, setActivePage] = useState("Test");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,27 +40,19 @@ const TestScreen = ({ route }) => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const email = route.params?.email;
-  //   const fetchUserName = async () => {
-  //     try {
-  //       const q = query(collection(db, 'users'), where('email', '==', email)); // Update this line
-  //       const querySnapshot = await getDocs(q);
-  //       querySnapshot.forEach((doc) => {
-  //         const userData = doc.data();
-  //         setUserName(userData.name);
-  //       });
-  //     } catch (error) {
-  //       console.log("Error fetching user data from Firestore", error);
-  //     }
-  //   };
-  
-  //   fetchUserName();
-  // }, [route.params?.email]);
+  const handleChangePage = (page) => {
+    setActivePage(page);
+    // Perform additional actions based on the page change if needed
+    if (page === "test") {
+      navigation.navigate("Test"); // Replace "TestScreen" with the appropriate screen name for the "test.js" file
+    }
+    else if (page == "home") {
+      navigation.navigate("Home")
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {/* <ModelView source={require('./Tomato')} /> */}
       
       {data ? (
         <View style={styles.content}>
@@ -71,6 +66,7 @@ const TestScreen = ({ route }) => {
       ) : (
         <Text>Loading data...</Text>
       )}
+      <Footer activePage={activePage} onChangePage={handleChangePage}/>
     </View>
   );
 };

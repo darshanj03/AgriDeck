@@ -50,7 +50,7 @@ const getCurrentDay = () => {
   return days[dayIndex];
 };
 
-const HomeScreen = ({ route }) => {
+const HomeScreen3 = ({ route }) => {
   const [weather, setWeather] = useState(null);
   const [placeName, setPlaceName] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -240,11 +240,7 @@ const HomeScreen = ({ route }) => {
 
       {isSidebarOpen && (
         <View style={styles.sidebar} {...panResponder.panHandlers}>
-          <HamburgerSidebar
-            activePage={activePage}
-            setActivePage={setActivePage}
-            handleLogout={handleLogout}
-          />
+
         </View>
       )}
       {isSidebarOpen && (
@@ -333,4 +329,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default HomeScreen3;

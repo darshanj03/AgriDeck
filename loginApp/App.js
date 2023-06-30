@@ -7,6 +7,7 @@ import HomeScreen from './screens/home';
 import TestScreen from './screens/test';
 import LoignScreen from './screens/login';
 import RegistrationScreen from './screens/registration';
+import HomeTest from './screens/homeTest';
 
 const Stack = createStackNavigator();
 
@@ -59,12 +60,13 @@ export default function App() {
             headerTitleAlign: 'center',
           }}
         />
-        <Stack.Screen name="Home" component={HomeScreen} 
+        <Stack.Screen name="Home" component={HomeTest} 
           options={({ route }) => ({
             title: 'Home',
             headerTitleAlign: 'center',
             headerLeft: null,
             email: route.params?.email,
+            gestureEnabled: false
           })}
           listeners={({ navigation }) => ({
             beforeRemove: () => {
