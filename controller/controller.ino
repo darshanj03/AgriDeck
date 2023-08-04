@@ -4,6 +4,13 @@
 #include <DHT.h>
 #include <WiFi.h>
 #include <ThingSpeak.h>
+#define GPIO_PIN_TOUCH 14
+
+int CHECK_INTERVAL = 1000;
+
+bool touchActive = false;
+bool relayState = false;
+unsigned long lastCheckTime = 0;
 
 WiFiClient client;
 Adafruit_BMP280 bmp;
@@ -14,16 +21,16 @@ Adafruit_BMP280 bmp;
 DHT dht(DHTPIN, DHTTYPE);     // Initialize the DHT sensor
 
 
-#define MQ_PIN 35        // Pin connected to the MQ135 sensor
+// #define MQ_PIN 35        // Pin connected to the MQ135 sensor
 // const int touchPin = 14;
 
 int soilMoisturePin = 34;    // Pin connected to the soil moisture sensor
 int counter = 0;
 
 // WiFi credentials
-const char* ssid = "Redmi_2";
-const char* password = "Openthed00r";
-const int relay = 5;
+const char* ssid = "realme 5i";
+const char* password = "mohitraj01";
+const int relay = 12;
 
 
 // ThingSpeak details
@@ -35,9 +42,8 @@ void setup() {
  Serial.begin(115200);
 
  pinMode(relay, OUTPUT);
+ pinMode(GPIO_PIN_TOUCH, INPUT);
  digitalWrite(relay, HIGH);
-
-//  pinMode(touchPin, INPUT);
 
  dht.begin();
  bmp.begin(0x76); // Use 0x77 if your BMP280 module has a different I2C address
@@ -46,15 +52,15 @@ void setup() {
  pinMode(soilMoisturePin, INPUT);
 
 
-//  WiFi.begin(ssid, password);
-//  ThingSpeak.begin(client);
+ WiFi.begin(ssid, password);
+ ThingSpeak.begin(client);
 
 
-//  while (WiFi.status() != WL_CONNECTED) {
-//    delay(1000);
-//    Serial.println("Connecting to WiFi...");
-//  }
-//  Serial.println("Connected to WiFi!");
+ while (WiFi.status() != WL_CONNECTED) {
+   delay(1000);
+   Serial.println("Connecting to WiFi...");
+ }
+ Serial.println("Connected to WiFi!");
 }
 
 
@@ -75,13 +81,12 @@ bool calculate_threshold(int soil_moisture_percentage, double temperature, doubl
 }
 
 
-void push_data(float temperature, float humidity, float pressure, float altitude, int airQuality, int moisturePercentage){
+void push_data(float temperature, float humidity, float pressure, float altitude, int moisturePercentage){
    // Send data to ThingSpeak
    ThingSpeak.setField(1, temperature);
    ThingSpeak.setField(2, humidity);
    ThingSpeak.setField(3, pressure);
    ThingSpeak.setField(4, altitude);
-   ThingSpeak.setField(5, airQuality);
    ThingSpeak.setField(6, moisturePercentage);
 
 
@@ -97,72 +102,185 @@ void push_data(float temperature, float humidity, float pressure, float altitude
 }
 
 
-void loop() {
- float temperature = dht.readTemperature();    // Read temperature from DHT22
- float humidity = dht.readHumidity();          // Read humidity from DHT22
+// void loop() {
+//   if (millis() - lastCheckTime >= CHECK_INTERVAL) {
+
+//  float temperature = dht.readTemperature();    // Read temperature from DHT22
+//  float humidity = dht.readHumidity();          // Read humidity from DHT22
 
 
- float pressure = bmp.readPressure() / 100.0F; // Read pressure from BMP280 in hPa
- float altitude = bmp.readAltitude();          // Read altitude from BMP280 in meters
+//  float pressure = bmp.readPressure() / 100.0F; // Read pressure from BMP280 in hPa
+//  float altitude = bmp.readAltitude();          // Read altitude from BMP280 in meters
 
 
- int airQuality = analogRead(MQ_PIN);          // Read air quality value from MQ135
+//  int airQuality = analogRead(MQ_PIN);          // Read air quality value from MQ135
 
 
- int soilMoisture = analogRead(soilMoisturePin); // Read soil moisture value from the sensor
- int moisturePercentage;
- if (soilMoisture < 1010){
-   moisturePercentage = 100;
- }
- else if (soilMoisture > 3000){
-   moisturePercentage = 0;
- } else{
-    moisturePercentage = map(soilMoisture, 1010, 3000, 100, 0);
- }
+//  int soilMoisture = analogRead(soilMoisturePin); // Read soil moisture value from the sensor
+//  int moisturePercentage;
+//  if (soilMoisture < 1010){
+//    moisturePercentage = 100;
+//  }
+//  else if (soilMoisture > 3000){
+//    moisturePercentage = 0;
+//  } else{
+//     moisturePercentage = map(soilMoisture, 1010, 3000, 100, 0);
+//  }
 
- bool thresh = calculate_threshold(moisturePercentage,temperature,humidity);
+//  bool thresh = calculate_threshold(moisturePercentage,temperature,humidity);
 
- Serial.print("Temperature: ");
- Serial.print(temperature);
- Serial.println(" °C");
- Serial.print("Humidity: ");
- Serial.print(humidity);
- Serial.println(" %");
- Serial.print("Pressure: ");
- Serial.print(pressure);
- Serial.println(" hPa");
- Serial.print("Altitude: ");
- Serial.print(altitude);
- Serial.println(" m");
- Serial.print("Air Quality: ");
- Serial.println(airQuality);
- Serial.print("Soil Moisture: ");
- Serial.print(moisturePercentage);
- Serial.println(" %");
- Serial.print("\n");
+//  Serial.print("Temperature: ");
+//  Serial.print(temperature);
+//  Serial.println(" °C");
+//  Serial.print("Humidity: ");
+//  Serial.print(humidity);
+//  Serial.println(" %");
+//  Serial.print("Pressure: ");
+//  Serial.print(pressure);
+//  Serial.println(" hPa");
+//  Serial.print("Altitude: ");
+//  Serial.print(altitude);
+//  Serial.println(" m");
+//  Serial.print("Air Quality: ");
+//  Serial.println(airQuality);
+//  Serial.print("Soil Moisture: ");
+//  Serial.print(moisturePercentage);
+//  Serial.println(" %");
+//  Serial.print("\n");
 
-//  int touchValue = digitalRead(touchPin);
-//   if (touchValue == HIGH) {
-//     digitalWrite(relay, LOW);
-//     // Perform your desired actions when the touch is detected
-//   } else if (touchValue == LOW) {
-//     digitalWrite(relay, HIGH);
+//  if (thresh && counter < 8) {
+//    activateStepUpModule();
+//    counter++;
+//    CHECK_INTERVAL = 1000;
+//  } else if (thresh){
+//     activateStepUpModule();
+//     //push_data(temperature, humidity, pressure, altitude, airQuality, moisturePercentage);
+//     counter = 0;
+//     CHECK_INTERVAL = 1000;
+//  } else {
+//      deactivateStepUpModule();
+//      counter = 0;
+//      //push_data(temperature, humidity, pressure, altitude, airQuality, moisturePercentage);
+//      CHECK_INTERVAL = 15000;
+//  }
+//  lastCheckTime = millis();
+// }
+//   int touchState = digitalRead(GPIO_PIN_TOUCH);
+//     if (touchState == HIGH) {
+//     touchActive = true;
+//     activateStepUpModule();
+//   } else if (!touchActive) {
+//     if (relayState) {
+//       activateStepUpModule();
+//     } else {
+//       deactivateStepUpModule();
+//     }
 //   }
 
+//   // Reset the touchActive flag after releasing the touch sensor
+//   if (touchActive && (touchState == LOW)) {
+//     touchActive = false;
+//   }
+// }
 
- if (thresh && counter < 8) {
-   digitalWrite(relay, LOW);
-   counter++;
-   delay(1000);
- } else if (thresh){
-    digitalWrite(relay, LOW);
-    //push_data(temperature, humidity, pressure, altitude, airQuality, moisturePercentage);
-    counter = 0;
-    delay(1000);
- } else {
-     digitalWrite(relay, HIGH);
-     counter = 0;
-     //push_data(temperature, humidity, pressure, altitude, airQuality, moisturePercentage);
-     delay(5000);
- }
+void loop() {
+  // Read touch sensor state
+  int touchState = digitalRead(GPIO_PIN_TOUCH);
+
+  if (touchState == HIGH) {
+    // Touch sensor is active, activate relay and update relay state
+    activateStepUpModule();
+    relayState = true;
+    touchActive = true;  // Set touchActive flag to indicate touch is active
+  } else if (touchActive && (touchState == LOW)) {
+    // Touch sensor was active and is now released, deactivate relay and update relay state
+    deactivateStepUpModule();
+    relayState = false;
+    touchActive = false;  // Reset touchActive flag
+  } else if (!touchActive) {
+    // Touch sensor is not active, control relay based on threshold
+    if (relayState) {
+      activateStepUpModule();
+    } else {
+      deactivateStepUpModule();
+    }
+  }
+
+  // Read sensor values and check threshold at regular intervals
+  if (millis() - lastCheckTime >= CHECK_INTERVAL) {
+    // Read sensor values
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+    float pressure = bmp.readPressure() / 100.0F;
+    float altitude = bmp.readAltitude();
+    int soilMoisture = analogRead(soilMoisturePin);
+    int moisturePercentage;
+
+    // Calculate moisture percentage
+    if (soilMoisture < 1010) {
+      moisturePercentage = 100;
+    } else if (soilMoisture > 3000) {
+      moisturePercentage = 0;
+    } else {
+      moisturePercentage = map(soilMoisture, 1010, 3000, 100, 0);
+    }
+
+    // Check threshold and control relay
+    bool thresholdExceeded = calculate_threshold(moisturePercentage, temperature, humidity);
+
+    if (thresholdExceeded) {
+      if (!touchActive) {
+        activateStepUpModule();
+        relayState = true;
+      }
+    } else {
+      deactivateStepUpModule();
+      relayState = false;
+    }
+
+    // Update last check time
+    lastCheckTime = millis();
+
+    // Print sensor values
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+    Serial.print("Humidity: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+    Serial.print("Pressure: ");
+    Serial.print(pressure);
+    Serial.println(" hPa");
+    Serial.print("Altitude: ");
+    Serial.print(altitude);
+    Serial.println(" m");
+    Serial.print("Soil Moisture: ");
+    Serial.print(moisturePercentage);
+    Serial.println(" %");
+    Serial.println();
+
+    push_data(temperature, humidity, pressure, altitude, moisturePercentage);
+
+    if (thresholdExceeded && counter < 8) {
+      activateStepUpModule();
+      counter++;
+      CHECK_INTERVAL = 1000;
+    } else if (thresholdExceeded) {
+      activateStepUpModule();
+      counter = 0;
+      CHECK_INTERVAL = 1000;
+    } else {
+      deactivateStepUpModule();
+      counter = 0;
+      CHECK_INTERVAL = 15000;
+    }
+}
+}
+
+void activateStepUpModule() {
+  digitalWrite(relay, LOW);
+}
+
+void deactivateStepUpModule() {
+  digitalWrite(relay, HIGH);
 }

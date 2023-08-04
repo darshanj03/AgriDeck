@@ -100,7 +100,7 @@ function LoginScreen(props) {
         await AsyncStorage.removeItem("email");
         await AsyncStorage.removeItem("password");
       }
-      navigation.navigate("Home", { email });
+      navigation.navigate("Home", { email: email });
     } catch (error) {
       Alert.alert("Login Error", error.message);
     } finally {
@@ -475,7 +475,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   modalContainer: {
     flex: 1,
     justifyContent: "flex-end",
@@ -519,3 +518,4 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+

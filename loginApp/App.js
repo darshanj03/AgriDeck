@@ -8,6 +8,7 @@ import TestScreen from './screens/test';
 import LoignScreen from './screens/login';
 import RegistrationScreen from './screens/registration';
 import HomeTest from './screens/homeTest';
+import PlantScreen2 from './screens/plantScreen2';
 
 const Stack = createStackNavigator();
 
@@ -75,7 +76,7 @@ export default function App() {
             },
           })}
         />
-        <Stack.Screen name="Test" component={TestScreen} 
+        <Stack.Screen name="Plant" component={PlantScreen2} 
           options={{
             title: 'Test',
             headerTitleAlign: 'center',
